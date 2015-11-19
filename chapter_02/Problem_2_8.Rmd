@@ -1,0 +1,23 @@
+---
+title: "Problem 2.8"
+author: "Yuwen Tan"
+date: "November 18, 2015"
+output: html_document
+---
+
+
+(a) Read data
+```{r}
+college <- read.csv("College.csv")
+```
+
+(b) Change row names and look at the data
+```{r}
+rownames(college) <- college[,1]
+fix(college)
+```
+
+(c) Further explore data
+```{r}
+summary(college)
+```
