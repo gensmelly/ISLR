@@ -1,0 +1,76 @@
+---
+title: "Problem 2.10"
+author: "Yuwen Tan"
+output: html_document
+---
+
+
+### (a) Load the Boston data
+```{r}
+library(MASS)
+show(?Boston)
+```
+
+### (b) Make pairwise scatterplots
+```{r}
+pairs(Boston)
+```
+
+### (c) From the scatterplots, rad and tax seem to be some related predictors. Higher rad or tax may lead to higher crime.
+
+### (d) Find the ranges for some predictors
+```{r}
+ranges <- matrix(0,3,2)
+ranges[1,] <- t(range(Boston$crim))
+ranges[2,] <- t(range(Boston$tax))
+ranges[3,] <- t(range(Boston$ptratio))
+ranges <- data.frame(ranges)
+rownames(ranges) <- c("crime rates","tax rates","pupil-teacher rates")
+colnames(ranges) <- c("low","high")
+ranges
+```
+
+It is clear that crime rates and tax rates differ a lot, while pupil-teacher rates have a relatively small range.
+
+### (e) Total number of suburbs bound the Charles river
+```{r}
+sum(Boston$chas)
+```
+
+### (f) Median pupil-teacher ratio
+```{r}
+median(Boston$ptratio)
+```
+
+### (g) The suburb with the lowest median value of owner-occupied homes
+```{r}
+Boston.lowMedv <- Boston[which(Boston$medv==min(Boston$medv)),]
+num <- length(Boston.lowMedv[,1])
+for (i in 1:length(names(Boston))) {
+  Boston.lowMedv[c(num+1,num+2),i]<-range(Boston[,i])
+}
+rownames(Boston.lowMedv)[c(num+1,num+2)] <- c("low","high")
+Boston.lowMedv
+```
+
+### (g) Number of suburbs regarding rooms per dwelling
+Number of suburbs with rm more than 7:
+```{r}
+sum(Boston$rm>7)
+```
+
+Number of suburbs with rm more than 8:
+```{r}
+sum(Boston$rm>8)
+```
+
+Details of those with rm more than 8:
+```{r}
+Boston.highRm <- Boston[Boston$rm>8,]
+num <- length(Boston.highRm[,1])
+for (i in 1:length(names(Boston))) {
+  Boston.highRm[c(num+1,num+2),i]<-range(Boston[,i])
+}
+rownames(Boston.highRm)[c(num+1,num+2)] <- c("low","high")
+Boston.highRm
+```
