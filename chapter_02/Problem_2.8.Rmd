@@ -1,0 +1,35 @@
+---
+title: "Problem 2.8"
+author: "Yuwen Tan"
+output: html_document
+---
+
+
+### (a) Read data
+```{r}
+college <- read.csv("College.csv")
+```
+
+### (b) Change row names and look at the data
+```{r}
+rownames(college) <- college[,1]
+#fix(college)
+```
+
+### (c) Further explore data
+```{r}
+summary(college)
+pairs(college[,1:10])
+plot(college$Private,college$Outstate)
+Elite <- rep("No",nrow(college))
+Elite[college$Top10perc>50] <- "Yes"
+Elite <- as.factor(Elite)
+college <- data.frame(college,Elite)
+summary(Elite)
+plot(college$Elite,college$Outstate)
+par(mfrow=c(2,2))
+hist(college$Books)
+hist(college$Grad.Rate)
+hist(college$Accept)
+hist(college$Enroll)
+```

@@ -1,0 +1,66 @@
+---
+title: "Problem 2.9"
+author: "Yuwen Tan"
+output: html_document
+---
+
+
+### (a) Get predictor types
+```{r}
+Auto <- read.table("Auto.data",header = T,na.strings = "?")
+Auto <- na.omit(Auto)
+summary(Auto)
+```
+
+We can see that qualitative predictors is name, and others are quantitative predictors.
+
+### (b) Find the range for each quantitative predictor
+```{r}
+ranges <- matrix(0,8,2)
+for (i in 1:8) {
+  ranges[i,] <- t(range(Auto[,i]))
+}
+ranges <- data.frame(ranges)
+rownames(ranges) <- names(Auto)[1:8]
+colnames(ranges) <- c("low","high")
+ranges
+```
+
+### (c) Find the mean and standard deviation for each quantitative predictor
+```{r}
+stats <- matrix(0,8,2)
+for (i in 1:8) {
+  stats[i,1] <- mean(Auto[,i])
+  stats[i,2] <- sd(Auto[,i])
+}
+stats <- data.frame(stats)
+rownames(stats) <- names(Auto)[1:8]
+colnames(stats) <- c("mean","std")
+stats
+```
+
+### (d) Redo part (c) after removing 10th through 85th observations
+```{r}
+Auto.sub <- Auto[-c(10:85),]
+stats <- matrix(0,8,2)
+for (i in 1:8) {
+  stats[i,1] <- mean(Auto.sub[,i])
+  stats[i,2] <- sd(Auto.sub[,i])
+}
+stats <- data.frame(stats)
+rownames(stats) <- names(Auto.sub)[1:8]
+colnames(stats) <- c("mean","std")
+stats
+```
+
+### (e) Investigate some relationships
+```{r}
+pairs(Auto)
+par(mfrow=c(2,2))
+plot(Auto$cylinders,Auto$mpg)
+plot(Auto$horsepower,Auto$mpg)
+plot(Auto$weight,Auto$mpg)
+plot(Auto$year,Auto$mpg)
+```
+
+### (f) From the panel shown above, those 4 variables could be helpful to forecast mpg.
