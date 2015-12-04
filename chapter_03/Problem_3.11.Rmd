@@ -10,52 +10,32 @@ x <- rnorm(100)
 y <- 2*x + rnorm(100)
 ```
 
-### (a) Simple linear regression without an intercept
+### (a) Simple linear regression without an intercept of y onto x
 ```{r}
-lm.fit <- lm(y ~ x+0)
-summary(lm.fit)
+lm.fit.x <- lm(y ~ x+0)
+summary(lm.fit.x)
 ```
 
-### (b) Coefficient interpretation
+### (b) Simple linear regression without an intercept of x onto y
 ```{r}
-summary(lm.fit)
-contrasts(Carseats$Urban)
-contrasts(Carseats$US)
+lm.fit.y <- lm(x ~ y+0)
+summary(lm.fit.y)
 ```
 
-Note that Urban and US are both qualitatice, with denote "Yes" as 1 and "No" as 0.
+### (c) The results above have the same t-statistic and p-values and R-square
 
-### (c) The model
-
-Sales = 13.043469 - 0.054459*Price - 0.021916 (if Urban) + 1.200573 (if US)
-
-### (d) Significant predictors
-
-From the p-values shown above, we can reject the null hypothesis for Price and USYes.
-
-### (e) Refit a smaller model
+### (d) Calculating t-statistics
 ```{r}
-lm.refit <- lm(Sales ~ Price+US, data = Carseats)
+t <- sqrt(length(x)-1)*sum(x*y)/sqrt(sum(x^2)*sum(y^2)-sum(x*y)^2)
+t
 ```
 
-### (f) Compare two models
+### (e) Switch x and y in the formula in (d), we would get exactly the same result
+
+### (f) Simple linear regression with an intercept
 ```{r}
-summary(lm.fit)
-summary(lm.refit)
+lm.fit.xNew <- lm(y ~ x)
+summary(lm.fit.xNew)
+lm.fit.yNew <- lm(x ~ y)
+summary(lm.fit.yNew)
 ```
-
-Two models have similar results, but the model in (e) has higher F-statistic and higher adjusted R-square, a little bit better than the model in (a).
-
-### (g) Confidence intervals for the coefficients
-```{r}
-confint(lm.refit)
-```
-
-### (f) Diagnostic plots
-```{r}
-par(mfrow=c(2,2))
-plot(lm.refit)
-```
-
-* There are not clear outliers.
-* There are no high leverage observations.
