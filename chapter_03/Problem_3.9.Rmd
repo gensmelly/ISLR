@@ -1,0 +1,53 @@
+---
+title: "Problem 3.9"
+author: "Yuwen Tan"
+output: html_document
+---
+
+### (a) Scatterplot matrix
+```{r}
+Auto <- read.table("Auto.data",header = T,na.strings = "?")
+Auto <- na.omit(Auto)
+attach(Auto)
+pairs(Auto)
+```
+
+### (b) Correlations
+```{r}
+cor(Auto[colnames(Auto) != "name"])
+```
+
+### (c) Multiple linear regression
+```{r}
+lm.fit <- lm(mpg~.,data = Auto[colnames(Auto) != "name"])
+summary(lm.fit)
+```
+
+(i) From the overall R-square and p-value, there is a relationship between the predictors and the response.
+(ii) Displacement, weight, year and origin are predictors with a statistically significant relationship to the response.
+(iii) The coefficient for year is 0.750773, which suggests that newer cars tend to have higher mpg.
+
+### (d) Disgnostic plots
+```{r}
+par(mfrow=c(2,2))
+plot(lm.fit)
+```
+
+* The Q-Q plot actually shows that there are some unusually large outliers.
+* The residual-vs-leverage plot shows that all residuals have low Cook's distance, with only one point having relatively high leverage.
+
+### (e) Refit with interaction effects
+```{r}
+lm.fit <- lm(mpg~weight*year,data = Auto)
+summary(lm.fit)
+```
+
+The interation of weight and year seems to be statistically significant.
+
+### (f) Tranformation of the variables
+```{r}
+lm.fit <- lm(mpg~poly(weight,2),data = Auto)
+summary(lm.fit)
+```
+
+This also looks like a acceptable model, using weight and squared weight as the predictors.

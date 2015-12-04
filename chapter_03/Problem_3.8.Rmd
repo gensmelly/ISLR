@@ -1,0 +1,39 @@
+---
+title: "Problem 3.8"
+author: "Yuwen Tan"
+output: html_document
+---
+
+### (a) Simple linear regression
+```{r}
+Auto <- read.table("Auto.data",header = T,na.strings = "?")
+Auto <- na.omit(Auto)
+lm.fit <- lm(mpg ~ horsepower, data = Auto)
+summary(lm.fit)
+```
+
+(i) From the R-square and p-value shown above, ther is a relationship between the predictor horsepower and the response mpg.
+(ii) The t-value for the coefficient of horsepower is -24.49, so the relationship is pretty strong.
+(iii) The coefficient estimate negative, meaning the relationship is negative.
+(iv) See the codes and outputs below:
+```{r}
+predict(lm.fit,data.frame(horsepower=8),interval="confidence")
+predict(lm.fit,data.frame(horsepower=8),interval="prediction")
+```
+
+### (b) Plot the linear regression
+```{r}
+plot(Auto$horsepower,Auto$mpg)
+abline(lm.fit,lwd=3,col="red")
+```
+
+### (c) Diagnostic plots of the linear regression
+```{r}
+par(mfrow=c(2,2))
+plot(lm.fit)
+```
+
+* From the residual plot, horsepower may be not linear related to mpg.
+* From the Q-Q plot, errors are normally distributed.
+* From the scale-location plot, the homoscedasticity assumption is held.
+* From the residual-vs-leverage plot, no points have large Cook's distance.

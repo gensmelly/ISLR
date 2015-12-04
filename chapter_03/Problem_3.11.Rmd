@@ -1,0 +1,61 @@
+---
+title: "Problem 3.11"
+author: "Yuwen Tan"
+output: html_document
+---
+#### Preparation
+```{r}
+set.seed(1)
+x <- rnorm(100)
+y <- 2*x + rnorm(100)
+```
+
+### (a) Simple linear regression without an intercept
+```{r}
+lm.fit <- lm(y ~ x+0)
+summary(lm.fit)
+```
+
+### (b) Coefficient interpretation
+```{r}
+summary(lm.fit)
+contrasts(Carseats$Urban)
+contrasts(Carseats$US)
+```
+
+Note that Urban and US are both qualitatice, with denote "Yes" as 1 and "No" as 0.
+
+### (c) The model
+
+Sales = 13.043469 - 0.054459*Price - 0.021916 (if Urban) + 1.200573 (if US)
+
+### (d) Significant predictors
+
+From the p-values shown above, we can reject the null hypothesis for Price and USYes.
+
+### (e) Refit a smaller model
+```{r}
+lm.refit <- lm(Sales ~ Price+US, data = Carseats)
+```
+
+### (f) Compare two models
+```{r}
+summary(lm.fit)
+summary(lm.refit)
+```
+
+Two models have similar results, but the model in (e) has higher F-statistic and higher adjusted R-square, a little bit better than the model in (a).
+
+### (g) Confidence intervals for the coefficients
+```{r}
+confint(lm.refit)
+```
+
+### (f) Diagnostic plots
+```{r}
+par(mfrow=c(2,2))
+plot(lm.refit)
+```
+
+* There are not clear outliers.
+* There are no high leverage observations.
