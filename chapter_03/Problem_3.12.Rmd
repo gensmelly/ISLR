@@ -1,0 +1,27 @@
+---
+title: "Problem 3.12"
+author: "Yuwen Tan"
+output: html_document
+---
+
+### (a) To make the coefficient estimates the same, we need to have sum(x\*x) equal to sum(y\*y)
+
+### (b) Example of different coefficient estimates
+```{r}
+x <- seq(1,100,length.out = 100)
+y <- seq(101,200,length.out = 100)
+lm.fit.x <- lm(y ~ x+0)
+summary(lm.fit.x)
+lm.fit.y <- lm(x ~ y+0)
+summary(lm.fit.y)
+```
+
+### (c) Example of same coefficient estimates
+```{r}
+x <- seq(1,100,length.out = 100)
+y <- seq(-100,-1,length.out = 100)
+lm.fit.x <- lm(y ~ x+0)
+summary(lm.fit.x)
+lm.fit.y <- lm(x ~ y+0)
+summary(lm.fit.y)
+```

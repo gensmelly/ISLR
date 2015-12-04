@@ -1,0 +1,94 @@
+---
+title: "Problem 3.13"
+author: "Yuwen Tan"
+output: html_document
+---
+#### Preparation
+```{r}
+set.seed(1)
+```
+
+### (a) Create x
+```{r}
+x <- rnorm(100)
+```
+
+### (b) Create eps
+```{r}
+eps <- rnorm(100)
+```
+
+### (c) Generate y
+```{r}
+y <- -1+0.5*x+eps
+length(y)
+```
+
+In this liner model, /beta_0 is -1, /beta_1 is 0.5.
+
+### (d) Scatterplot
+```{r}
+plot(x,y)
+```
+
+The relationship between x and y is not clear from the plot, but somehow it shows that higher x leads to higher y.
+
+### (e) Fit a least squares linear model
+```{r}
+lm.fit <- lm(y ~ x)
+summary(lm.fit)
+```
+
+The estimates are very close to the real values of coefficients.
+
+### (f) Display the regression line
+```{r}
+plot(x,y)
+abline(lm.fit, col = "red")
+legend("bottomright",c("(x,y)","regression line"),col=c("black","red"),pch=c("o",""),lty=0:1)
+```
+
+### (g) Fit a polynomial regression model
+```{r}
+lm.fit.quad <- lm(y ~ poly(x,2))
+summary(lm.fit.quad)
+```
+
+The polynomial model has slightly higher R-square, but the quadratic term is not significant. SO the model may not perform better.
+
+### (h) Refit linear model with less noise
+```{r}
+x <- rnorm(100)
+eps <- rnorm(100,sd=0.1)
+y <- -1+0.5*x+eps
+lm.fit.less <- lm(y ~ x)
+summary(lm.fit.less)
+plot(x,y)
+abline(lm.fit.less, col = "red")
+legend("bottomright",c("(x,y)","regression line"),col=c("black","red"),pch=c("o",""),lty=0:1)
+```
+
+The linear model seems to fit even better.
+
+### (i) Refit linear model with more noise
+```{r}
+x <- rnorm(100)
+eps <- rnorm(100,sd=10)
+y <- -1+0.5*x+eps
+lm.fit.more <- lm(y ~ x)
+summary(lm.fit.more)
+plot(x,y)
+abline(lm.fit.more, col = "red")
+legend("bottomright",c("(x,y)","regression line"),col=c("black","red"),pch=c("o",""),lty=0:1)
+```
+
+The linear model does not fit so well in this case.
+
+### (j) Confidence intervals
+```{r}
+confint(lm.fit)
+confint(lm.fit.less)
+confint(lm.fit.more)
+```
+
+Clearly, when the noise is smaller, the confidence interval is narrower.
