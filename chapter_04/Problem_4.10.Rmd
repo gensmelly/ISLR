@@ -1,0 +1,122 @@
+---
+title: "Problem 4.10"
+author: "Yuwen Tan"
+output: html_document
+---
+
+### (a) Summaries of the Weekly data
+```{r}
+library(ISLR)
+attach(Weekly)
+names(Weekly)
+dim(Weekly)
+summary(Weekly)
+cor(Weekly[,-9])
+plot(Volume,type = "l")
+plot(Today,type = "l")
+```
+
+### (b) Logistic regression with response of Direction 
+```{r}
+glm.fit <- glm(Direction~Lag1+Lag2+Lag3+Lag4+Lag5+Volume,data = Weekly,family = binomial)
+summary(glm.fit)
+```
+
+Only Lag2 is statistically significant, while others are not.
+
+### (c) Confusion matrix
+```{r}
+glm.probs <- predict(glm.fit,type = "response")
+contrasts(Direction)
+glm.pred <- rep("Down",length(glm.probs))
+glm.pred[glm.probs>0.5] <- "Up"
+table(glm.pred,Direction)
+mean(glm.pred==Direction)
+```
+
+### (d) Logistic regression model with Lag2
+```{r}
+train <- (Year<=2008)
+glm.fit <- glm(Direction~Lag2,data = Weekly,family = binomial,subset = train)
+summary(glm.fit)
+Weekly.test <- Weekly[!train,]
+Direction.test <- Direction[!train]
+glm.probs <- predict(glm.fit,Weekly.test,type = "response")
+glm.pred <- rep("Down",length(glm.probs))
+glm.pred[glm.probs>0.5] <- "Up"
+table(glm.pred,Direction.test)
+mean(glm.pred==Direction.test)
+```
+
+From the confusion matrix, we can find the Type I error of 5/(5+9)=35.7%, the Type II error of 34/(34+56)=37.8%. Specificity is 64.3%, and sensitivity is 62.2%.
+
+### (e) LDA
+```{r}
+library(MASS)
+lda.fit <- lda(Direction~Lag2,data = Weekly,subset = train)
+lda.fit
+lda.pred <- predict(lda.fit,Weekly.test)
+lda.class <- lda.pred$class
+table(lda.class,Direction.test)
+mean(lda.class==Direction.test)
+```
+
+### (f) QDA
+```{r}
+qda.fit <- qda(Direction~Lag2,data = Weekly,subset = train)
+qda.fit
+qda.pred <- predict(qda.fit,Weekly.test)
+qda.class <- qda.pred$class
+table(qda.class,Direction.test)
+mean(qda.class==Direction.test)
+```
+
+### (g) KNN with K=1
+```{r}
+library(class)
+train.X <- data.frame(Lag2[train])
+test.X <- data.frame(Lag2[!train])
+train.Direction <- Direction[train]
+set.seed(1)
+knn.pred <- knn(train.X,test.X,train.Direction,k=1)
+table(knn.pred,Direction.test)
+mean(knn.pred==Direction.test)
+```
+
+### (h) Best models
+As we have shown above, it seems that the logistic regression and LDA perform better among all 4 models.
+
+
+### (i) Refit with new combinations of predictors
+```{r}
+# Logistic regression
+glm.fit <- glm(Direction~Lag1+Lag2,data = Weekly,family = binomial,subset = train)
+summary(glm.fit)
+glm.probs <- predict(glm.fit,Weekly.test,type = "response")
+glm.pred <- rep("Down",length(glm.probs))
+glm.pred[glm.probs>0.5] <- "Up"
+table(glm.pred,Direction.test)
+mean(glm.pred==Direction.test)
+# LDA
+lda.fit <- lda(Direction~Lag1+Lag2,data = Weekly,subset = train)
+lda.fit
+lda.pred <- predict(lda.fit,Weekly.test)
+lda.class <- lda.pred$class
+table(lda.class,Direction.test)
+mean(lda.class==Direction.test)
+# QDA
+qda.fit <- qda(Direction~Lag2,data = Weekly,subset = train)
+qda.fit
+qda.pred <- predict(qda.fit,Weekly.test)
+qda.class <- qda.pred$class
+table(qda.class,Direction.test)
+mean(qda.class==Direction.test)
+# KNN
+train.X <- data.frame(cbind(Lag1,Lag2)[train,])
+test.X <- data.frame(cbind(Lag1,Lag2)[!train,])
+train.Direction <- Direction[train]
+set.seed(1)
+knn.pred <- knn(train.X,test.X,train.Direction,k=7)
+table(knn.pred,Direction.test)
+mean(knn.pred==Direction.test)
+```
