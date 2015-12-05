@@ -1,0 +1,70 @@
+---
+title: "Problem 3.14"
+author: "Yuwen Tan"
+output: html_document
+---
+
+### (a) Linear model
+```{r}
+set.seed(1)
+x1 <- runif(100)
+x2 <- 0.5*x1+rnorm(100)/10
+y <- 2+2*x1+0.3*x2+rnorm(100)
+```
+
+The model is: y=2+2 * x1+0.3 * x2
+
+### (b) Relationship between variables
+```{r}
+cor(x1,x2)
+plot(x1,x2)
+```
+
+### (c) Least square regression
+```{r}
+lm.fit <- lm(y ~ x1+x2)
+summary(lm.fit)
+```
+
+Only beta_0 is significant, and beta_1 is acceptable. The coefficient estimates of x1 and x2 are not so close to the actual coefficient. We can reject the null hypothesis for beta_1, but not for beta_2.
+
+### (d) Least square regression using only x1
+```{r}
+lm.fit1 <- lm(y ~ x1)
+summary(lm.fit1)
+```
+
+This time beta_1 is much more significant, and we can reject the null hypothesis for it.
+
+### (e) Least square regression using only x2
+```{r}
+lm.fit2 <- lm(y ~ x2)
+summary(lm.fit2)
+```
+
+This time beta_2 is much much more significant, and we can reject the null hypothesis for it.
+
+### (f) These results shown below don't contradict each other, because x1 and x2 are highly correlated.
+
+### (g) Refit with an additional observation
+```{r}
+x1 <- c(x1,0.1)
+x2 <- c(x2,0.8)
+y <- c(y,8)
+lm.fit <- lm(y ~ x1+x2)
+summary(lm.fit)
+par(mfrow=c(2,2))
+plot(lm.fit)
+lm.fit1 <- lm(y ~ x1)
+summary(lm.fit1)
+par(mfrow=c(2,2))
+plot(lm.fit1)
+lm.fit2 <- lm(y ~ x2)
+summary(lm.fit2)
+par(mfrow=c(2,2))
+plot(lm.fit2)
+```
+
+* We can see that only the result from model (c) has changed a lot.
+* The observation is an outlier in model (c) and (d).
+* The observation is a high-leverage point in model (c).

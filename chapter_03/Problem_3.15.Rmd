@@ -1,0 +1,56 @@
+---
+title: "Problem 3.15"
+author: "Yuwen Tan"
+output: html_document
+---
+
+### (a) Simple linear regression models
+```{r}
+library(MASS)
+predictor <- names(Boston)
+predictor <- predictor[-1]
+coef_uni <- c()
+for (x in predictor) {
+  lm.fit <- lm(Boston$crim~Boston[,x])
+  show(x)
+  show(summary(lm.fit))
+  coef_uni <- c(coef_uni,coef(lm.fit)[2])
+}
+names(coef_uni) <- predictor
+```
+
+Many predictors have statistically significant association with the response. These predictors are zn, indus, nox, rm, age, dis, rad, tax, ptratio, black, lstat, medv.
+
+Take lstat as an exmaple.
+```{r}
+lm.fit <- lm(crim~lstat, data = Boston)
+plot(Boston$lstat,Boston$crim)
+abline(lm.fit,col="red")
+par(mfrow=c(2,2))
+plot(lm.fit)
+```
+
+### (b) A multiple regression model
+```{r}
+lm.fit <- lm(crim~.,data = Boston)
+summary(lm.fit)
+coef_multi <- coef(lm.fit)[-1]
+```
+
+In this model, only dis and rad are very significant. Many predictors are not as significant as they are for models in (a).
+
+### (c) Compare regression models
+```{r}
+plot(coef_uni,coef_multi,xlab="Univariate Coefficient",ylab="Multivariate Coefficient")
+text(coef_uni,coef_multi,names(coef_uni),col = "red",cex = 0.5,pos = 4)
+```
+
+### (d) Non-linear association
+```{r}
+predictor <- predictor[-3]
+for (x in predictor) {
+  lm.fit <- lm(Boston$crim~poly(Boston[,x],3))
+  show(x)
+  show(summary(lm.fit))
+}
+```
