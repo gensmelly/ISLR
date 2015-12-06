@@ -1,0 +1,33 @@
+---
+title: "Problem 5.6"
+author: "Yuwen Tan"
+output: html_document
+---
+
+### (a) Logistic regression
+```{r}
+library(ISLR)
+glm.fit <- glm(default~income+balance,data = Default,family = binomial)
+summary(glm.fit)
+```
+
+### (b) New function boot.fn
+```{r}
+boot.fn <- function(input,index) {
+  glm.fit <- glm(default~income+balance,data = input,family = binomial,subset = index)
+  return(coef(glm.fit))
+}
+```
+
+### (c) Estimate standard errors of the coefficients
+```{r}
+library(boot)
+set.seed(1)
+boot(Default,boot.fn,R=1000)
+```
+
+The results are actually very close to each other.
+
+### (d) Compare the estimates
+
+The estimates for the standard errors are actually very close between these two methods.
