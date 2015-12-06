@@ -1,0 +1,76 @@
+---
+title: "Problem 4.13"
+author: "Yuwen Tan"
+output: html_document
+---
+
+### (a) Create binary variable crim01
+```{r}
+library(MASS)
+library(ISLR)
+attach(Boston)
+crim01 <- crim*0
+crim01[crim>median(crim)] <- 1
+Boston_new <- data.frame(Boston,crim01)
+```
+
+### (b) Explore the association between crim01 and other features
+```{r}
+for (i in 1:14) {
+  boxplot(Boston[,i]~crim01,xlab="crim01",ylab=names(Boston)[i])
+}
+```
+
+Indus, nox, age, dis and rad all seem to associate with crim01. Among these three, nox looks the best and we will take it for the following questions.
+
+### (c) Split data into training and test
+```{r}
+set.seed(1)
+train <- sample(1:length(crim01),length(crim01)/2)
+```
+
+### (d) LDA
+```{r}
+lda.fit <- lda(crim01~nox,data = Boston_new,subset = train)
+lda.fit
+lda.pred <- predict(lda.fit,Boston_new[-train,])
+lda.class <- lda.pred$class
+table(lda.class,crim01[-train])
+mean(lda.class==crim01[-train])
+```
+
+### (e) QDA
+```{r}
+qda.fit <- qda(crim01~nox,data = Boston_new,subset = train)
+qda.fit
+qda.pred <- predict(qda.fit,Boston_new[-train,])
+qda.class <- qda.pred$class
+table(qda.class,crim01[-train])
+mean(qda.class==crim01[-train])
+```
+
+### (f) Logistic regression model
+```{r}
+glm.fit <- glm(crim01~nox,data = Boston_new,family = binomial,subset = train)
+summary(glm.fit)
+glm.probs <- predict(glm.fit,Boston_new[-train,],type = "response")
+glm.pred <- rep(0,length(crim01[-train]))
+glm.pred[glm.probs>0.5] <- 1
+table(glm.pred,crim01[-train])
+mean(glm.pred==crim01[-train])
+```
+
+### (g) KNN
+```{r}
+library(class)
+train.X <- data.frame(nox[train])
+test.X <- data.frame(nox[-train])
+set.seed(1)
+knn.pred <- knn(train.X,test.X,crim01[train],k=1)
+table(knn.pred,crim01[-train])
+mean(knn.pred==crim01[-train])
+set.seed(1)
+knn.pred <- knn(train.X,test.X,crim01[train],k=3)
+table(knn.pred,crim01[-train])
+mean(knn.pred==crim01[-train])
+```

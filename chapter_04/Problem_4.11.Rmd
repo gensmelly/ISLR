@@ -1,0 +1,77 @@
+---
+title: "Problem 4.11"
+author: "Yuwen Tan"
+output: html_document
+---
+
+### (a) Create binary variable mpg01
+```{r}
+library(ISLR)
+attach(Auto)
+mpg01 <- mpg*0
+mpg01[mpg>median(mpg)] <- 1
+Auto_new <- data.frame(Auto,mpg01)
+```
+
+### (b) Explore the association between mpg01 and other features
+```{r}
+for (i in 1:8) {
+  boxplot(Auto[,i]~mpg01,xlab="mpg01",ylab=names(Auto)[i])
+}
+plot(mpg01,name)
+```
+
+Displacement, horsepower and weight all seem to associate with mpg01. Among these three, displacement looks the best and we will take it for the following questions.
+
+### (c) Split data into training and test
+```{r}
+set.seed(1)
+train <- sample(1:length(mpg01),length(mpg01)/2)
+```
+
+### (d) LDA
+```{r}
+library(MASS)
+lda.fit <- lda(mpg01~displacement,data = Auto_new,subset = train)
+lda.fit
+lda.pred <- predict(lda.fit,Auto_new[-train,])
+lda.class <- lda.pred$class
+table(lda.class,mpg01[-train])
+mean(lda.class==mpg01[-train])
+```
+
+### (e) QDA
+```{r}
+qda.fit <- qda(mpg01~displacement,data = Auto_new,subset = train)
+qda.fit
+qda.pred <- predict(qda.fit,Auto_new[-train,])
+qda.class <- qda.pred$class
+table(qda.class,mpg01[-train])
+mean(qda.class==mpg01[-train])
+```
+
+### (f) Logistic regression model
+```{r}
+glm.fit <- glm(mpg01~displacement,data = Auto_new,family = binomial,subset = train)
+summary(glm.fit)
+glm.probs <- predict(glm.fit,Auto_new[-train,],type = "response")
+glm.pred <- rep(0,length(mpg01[-train]))
+glm.pred[glm.probs>0.5] <- 1
+table(glm.pred,mpg01[-train])
+mean(glm.pred==mpg01[-train])
+```
+
+### (g) KNN
+```{r}
+library(class)
+train.X <- data.frame(displacement[train])
+test.X <- data.frame(displacement[-train])
+set.seed(1)
+knn.pred <- knn(train.X,test.X,mpg01[train],k=1)
+table(knn.pred,mpg01[-train])
+mean(knn.pred==mpg01[-train])
+set.seed(1)
+knn.pred <- knn(train.X,test.X,mpg01[train],k=4)
+table(knn.pred,mpg01[-train])
+mean(knn.pred==mpg01[-train])
+```
