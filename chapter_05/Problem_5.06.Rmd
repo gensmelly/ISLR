@@ -30,4 +30,4 @@ The results are actually very close to each other.
 
 ### (d) Compare the estimates
 
-The estimates for the standard errors are actually very close between these two methods.
+The estimates for the standard errors are actually very close between these two methods. The bootstrap function may be resulting in a little bit smaller estimated standard errors.

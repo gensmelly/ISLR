@@ -1,0 +1,53 @@
+---
+title: "Problem 5.8"
+author: "Yuwen Tan"
+output: html_document
+---
+
+### (a) Simulated data set
+```{r}
+set.seed(1)
+y <- rnorm(100)
+x <- rnorm(100)
+y <- x-2*x^2+rnorm(100)
+```
+
+In this data set,n is 100 and p is 3.
+The equation is: y = 0 + x - 2 * x^2
+
+### (b) Scatterplot
+```{r}
+plot(x,y)
+```
+
+### (c) LOOCV errors
+```{r}
+library(boot)
+set.seed(2)
+cv.err <- rep(0,4)
+sim.data <- data.frame(x,y)
+for (i in 1:4) {
+  glm.fit <- glm(y~poly(x,i),data = sim.data)
+  show(summary(glm.fit))
+  cv.err[i] <- cv.glm(sim.data,glm.fit)$delta[1]
+}
+cv.err
+```
+
+### (d) LOOCV errors again
+```{r}
+set.seed(3)
+cv.err <- rep(0,4)
+sim.data <- data.frame(x,y)
+for (i in 1:4) {
+  glm.fit <- glm(y~poly(x,i),data = sim.data)
+  cv.err[i] <- cv.glm(sim.data,glm.fit)$delta[1]
+}
+cv.err
+```
+
+The result is exactly the same, because LOOCV is not affected by random seeds.
+
+### (e) Model ii has the smallest LOOCV error, just as expected.
+
+### (f) From the statistical significance, Model ii still is the best one, as expected.

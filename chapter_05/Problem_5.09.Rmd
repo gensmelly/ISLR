@@ -1,0 +1,66 @@
+---
+title: "Problem 5.9"
+author: "Yuwen Tan"
+output: html_document
+---
+
+### (a) Estimate the population mean of medv
+```{r}
+library(MASS)
+mean(Boston$medv)
+```
+
+### (b) Estimate the standard error
+```{r}
+sd(Boston$medv)/sqrt(length(Boston$medv))
+```
+
+### (c) Estimate the standard error by bootstrap
+```{r}
+library(boot)
+mean.fn <- function(data,index) {
+  return(mean(data[index]))
+}
+set.seed(1)
+Boot <- boot(Boston$medv,mean.fn,R=1000)
+Boot
+```
+
+The result is close to the answer in (b), but bootstrap is a little larger.
+
+### (d) Confidence interval
+```{r}
+Boot$t0-2*sd(Boot$t)
+Boot$t0+2*sd(Boot$t)
+t.test(Boston$medv)
+```
+
+These results are close, but bootstrap is a little larger.
+
+### (e) Estimate the population median of medv
+```{r}
+median(Boston$medv)
+```
+
+### (f) Estimate the standard error by bootstrap
+```{r}
+median.fn <- function(data,index) {
+  return(median(data[index]))
+}
+set.seed(1)
+boot(Boston$medv,median.fn,R=1000)
+```
+
+### (g) Estimate the tenth percentile of medv
+```{r}
+quantile(Boston$medv,0.1)
+```
+
+### (h) Estimate the standard error by bootstrap
+```{r}
+quantile.fn <- function(data,index) {
+  return(quantile(data[index],0.1))
+}
+set.seed(1)
+boot(Boston$medv,quantile.fn,R=1000)
+```
